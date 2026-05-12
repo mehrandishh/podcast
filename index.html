@@ -1,0 +1,1433 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>لاوکست استودیو | ساخت پادکست احساسی از متن و صدا</title>
+  <meta name="description" content="لاوکست استودیو متن شما را به بخش‌های روایی تقسیم می‌کند، امکان ضبط هر بخش را می‌دهد و یک خروجی صوتی یکدست و قابل دانلود می‌سازد." />
+  <meta name="theme-color" content="#0f0a12" />
+
+  <style>
+    :root{
+      --bg:#09070c;
+      --bg2:#120c16;
+      --panel:rgba(255,255,255,.06);
+      --panel-2:rgba(255,255,255,.08);
+      --line:rgba(255,255,255,.11);
+      --text:#f7eff7;
+      --muted:#b8aabd;
+      --muted-2:#94879b;
+      --pink:#ff5da8;
+      --violet:#9e6bff;
+      --violet-2:#c4abff;
+      --green:#53e2ae;
+      --shadow:0 24px 70px rgba(0,0,0,.38);
+      --radius:28px;
+      --radius-sm:18px;
+      --grad:linear-gradient(135deg,#ff5da8 0%,#9e6bff 55%,#7ad7ff 100%);
+      --trans:.28s cubic-bezier(.2,.8,.2,1);
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Tahoma,Arial,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 15% 10%, rgba(255,93,168,.18), transparent 30%),
+        radial-gradient(circle at 85% 15%, rgba(158,107,255,.16), transparent 30%),
+        linear-gradient(180deg,#08060a 0%,#120c16 48%,#09070c 100%);
+      line-height:1.9;
+      overflow-x:hidden;
+    }
+
+    a{text-decoration:none;color:inherit}
+    button,input,textarea{font:inherit}
+    .container{width:min(1100px,calc(100% - 32px));margin:0 auto}
+
+    .glass{
+      background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.05));
+      border:1px solid var(--line);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(18px);
+      -webkit-backdrop-filter:blur(18px);
+    }
+
+    .gradient-text{
+      background:var(--grad);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.05);
+      color:#eadceb;
+      font-size:13px;
+    }
+
+    .btn{
+      min-height:48px;
+      border:0;
+      border-radius:999px;
+      padding:12px 18px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      cursor:pointer;
+      color:var(--text);
+      transition:transform var(--trans),opacity var(--trans),box-shadow var(--trans),background var(--trans);
+    }
+
+    .btn:hover{transform:translateY(-2px)}
+    .btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+    .btn-primary{
+      background:var(--grad);
+      box-shadow:0 16px 40px rgba(255,93,168,.2);
+      font-weight:800;
+    }
+    .btn-secondary{
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+    }
+
+    .btn:focus-visible,
+    textarea:focus-visible,
+    input:focus-visible{
+      outline:3px solid rgba(255,93,168,.35);
+      outline-offset:3px;
+    }
+
+    header{
+      position:sticky;
+      top:0;
+      z-index:50;
+      background:rgba(9,7,12,.72);
+      backdrop-filter:blur(16px);
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+
+    .nav{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      min-height:74px;
+    }
+
+    .logo{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:900;
+      letter-spacing:-.4px;
+    }
+
+    .logo-mark{
+      width:38px;height:38px;border-radius:14px;
+      display:grid;place-items:center;
+      background:var(--grad);
+      box-shadow:0 12px 30px rgba(255,93,168,.22);
+    }
+
+    .nav-links{
+      display:flex;align-items:center;gap:22px;
+      color:var(--muted);
+      font-size:14px;
+    }
+    .nav-links a:hover{color:var(--text)}
+    .mobile-toggle{
+      display:none;
+      width:46px;height:46px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      cursor:pointer;
+    }
+
+    .hero{
+      padding:82px 0 54px;
+    }
+
+    .hero-grid{
+      display:grid;
+      grid-template-columns:1.05fr .95fr;
+      gap:30px;
+      align-items:center;
+    }
+
+    h1{
+      margin:16px 0 16px;
+      font-size:clamp(40px,6vw,76px);
+      line-height:1.14;
+      letter-spacing:-1.8px;
+    }
+
+    .lead{
+      color:#d8cadb;
+      font-size:clamp(17px,2vw,20px);
+      max-width:620px;
+    }
+
+    .hero-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:28px;
+    }
+
+    .hero-note{
+      margin-top:18px;
+      color:var(--muted);
+      font-size:14px;
+      max-width:580px;
+    }
+
+    .preview{
+      border-radius:32px;
+      padding:18px;
+      overflow:hidden;
+      position:relative;
+    }
+
+    .preview-inner{
+      border-radius:24px;
+      background:rgba(8,6,11,.6);
+      border:1px solid rgba(255,255,255,.1);
+      padding:18px;
+    }
+
+    .wave{
+      height:88px;
+      display:flex;
+      align-items:center;
+      gap:6px;
+      padding:14px;
+      border-radius:20px;
+      background:rgba(255,255,255,.045);
+      overflow:hidden;
+    }
+
+    .bar{
+      flex:1;
+      min-width:5px;
+      border-radius:999px;
+      background:linear-gradient(180deg,#ff8dc0,#9e6bff);
+      animation:pulse 1.6s ease-in-out infinite alternate;
+      opacity:.9;
+    }
+
+    @keyframes pulse{
+      from{transform:scaleY(.55);opacity:.55}
+      to{transform:scaleY(1);opacity:1}
+    }
+
+    .preview-meta{
+      display:grid;
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .meta-row{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      padding:14px 16px;
+      border-radius:18px;
+      background:rgba(255,255,255,.045);
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    section{padding:58px 0}
+    .section-head{
+      max-width:720px;
+      margin-bottom:26px;
+    }
+
+    .eyebrow{
+      color:#ff9fca;
+      font-size:13px;
+      font-weight:800;
+      margin-bottom:10px;
+    }
+
+    h2{
+      margin:0;
+      font-size:clamp(28px,4vw,48px);
+      line-height:1.22;
+      letter-spacing:-1px;
+    }
+
+    .section-head p{
+      color:var(--muted);
+      margin:12px 0 0;
+      font-size:16px;
+    }
+
+    .simple-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:14px;
+    }
+
+    .card{
+      border-radius:26px;
+      padding:20px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.1);
+      transition:transform var(--trans),background var(--trans),border var(--trans);
+    }
+
+    .card:hover{
+      transform:translateY(-4px);
+      background:rgba(255,255,255,.07);
+      border-color:rgba(255,255,255,.15);
+    }
+
+    .icon{
+      width:44px;height:44px;border-radius:16px;
+      display:grid;place-items:center;
+      margin-bottom:14px;
+      background:linear-gradient(135deg,rgba(255,93,168,.18),rgba(158,107,255,.14));
+      border:1px solid rgba(255,255,255,.12);
+      font-size:20px;
+    }
+
+    .card h3{margin:0 0 8px;font-size:18px}
+    .card p,.card li{margin:0;color:var(--muted);font-size:14px}
+
+    .demo-shell{
+      border-radius:34px;
+      padding:20px;
+    }
+
+    .demo-grid{
+      display:grid;
+      grid-template-columns:.92fr 1.08fr;
+      gap:16px;
+    }
+
+    .panel{
+      border-radius:24px;
+      padding:18px;
+      background:rgba(8,6,11,.56);
+      border:1px solid rgba(255,255,255,.1);
+    }
+
+    textarea{
+      width:100%;
+      min-height:220px;
+      resize:vertical;
+      padding:16px;
+      color:var(--text);
+      line-height:2;
+      border-radius:20px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.12);
+    }
+
+    .controls{display:grid;gap:12px;margin-top:16px}
+    .control{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:12px 14px;
+      border-radius:16px;
+      background:rgba(255,255,255,.045);
+      border:1px solid rgba(255,255,255,.09);
+    }
+
+    .control small{display:block;color:var(--muted-2);font-size:12px}
+    .switch{
+      position:relative;width:50px;height:28px;flex:0 0 auto;
+    }
+    .switch input{display:none}
+    .switch span{
+      position:absolute;inset:0;border-radius:999px;
+      background:rgba(255,255,255,.14);
+      transition:var(--trans);cursor:pointer;
+    }
+    .switch span::after{
+      content:"";position:absolute;top:3px;right:3px;
+      width:22px;height:22px;border-radius:50%;
+      background:#fff;transition:var(--trans);
+    }
+    .switch input:checked + span{background:linear-gradient(135deg,var(--pink),var(--violet))}
+    .switch input:checked + span::after{right:25px}
+    input[type="range"]{width:140px;accent-color:var(--pink)}
+
+    .segments{
+      display:grid;
+      gap:12px;
+    }
+
+    .segment{
+      border-radius:22px;
+      padding:16px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.1);
+    }
+
+    .segment-top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
+
+    .segment-title{font-weight:900;font-size:16px}
+    .segment-meta{color:var(--muted-2);font-size:13px}
+    .segment-text{
+      padding:12px;
+      border-radius:16px;
+      background:rgba(0,0,0,.16);
+      color:#dccccf;
+      font-size:14px;
+      margin:10px 0;
+    }
+
+    .record-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+      margin-top:10px;
+    }
+
+    .tiny-btn{
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      border-radius:999px;
+      padding:9px 12px;
+      cursor:pointer;
+      transition:var(--trans);
+      font-size:13px;
+    }
+    .tiny-btn:hover{background:rgba(255,255,255,.1)}
+    .tiny-btn.recording{background:rgba(255,95,120,.18);border-color:rgba(255,95,120,.34)}
+    .tiny-btn.done{background:rgba(83,226,174,.14);border-color:rgba(83,226,174,.28)}
+
+    .status{color:var(--muted);font-size:13px}
+    audio{width:100%;margin-top:10px;height:42px}
+
+    .progress-wrap{display:none;margin-top:14px}
+    .progress{
+      width:100%;height:12px;border-radius:999px;overflow:hidden;
+      background:rgba(255,255,255,.1);
+    }
+    .progress > div{
+      width:0;height:100%;background:var(--grad);
+      transition:width .25s ease;
+    }
+
+    .log{
+      min-height:24px;
+      margin-top:10px;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .final-box{
+      display:none;
+      margin-top:14px;
+      padding:14px;
+      border-radius:20px;
+      background:rgba(83,226,174,.08);
+      border:1px solid rgba(83,226,174,.16);
+    }
+
+    .faq{
+      display:grid;
+      gap:12px;
+    }
+
+    details{
+      border-radius:18px;
+      padding:15px 16px;
+      background:rgba(255,255,255,.045);
+      border:1px solid rgba(255,255,255,.1);
+    }
+
+    summary{cursor:pointer;font-weight:800}
+    details p{color:var(--muted);margin-bottom:0}
+
+    .cta{
+      text-align:center;
+      padding:44px 22px;
+      border-radius:32px;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(255,93,168,.18), transparent 34%),
+        linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.05));
+      border:1px solid rgba(255,255,255,.11);
+    }
+
+    footer{
+      padding:40px 0;
+      border-top:1px solid rgba(255,255,255,.08);
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .footer-grid{
+      display:grid;
+      grid-template-columns:1.4fr 1fr 1fr;
+      gap:20px;
+    }
+
+    .reveal{
+      opacity:0;
+      transform:translateY(16px);
+      transition:.65s ease;
+    }
+    .reveal.visible{opacity:1;transform:none}
+
+    @media (max-width:980px){
+      .hero-grid,.demo-grid,.simple-grid,.footer-grid{grid-template-columns:1fr}
+      .nav-links,.nav-cta{display:none}
+      .mobile-toggle{display:block}
+      .nav.open{align-items:flex-start;padding:12px 0}
+      .nav.open .nav-links{
+        display:flex;
+        flex-direction:column;
+        position:absolute;
+        top:74px;right:16px;left:16px;
+        padding:16px;
+        border-radius:22px;
+        background:rgba(10,8,13,.96);
+        border:1px solid rgba(255,255,255,.12);
+      }
+    }
+
+    @media (max-width:640px){
+      .container{width:min(100% - 22px,1100px)}
+      .hero{padding-top:58px}
+      .hero-actions .btn{width:100%}
+      .control{flex-direction:column;align-items:flex-start}
+      input[type="range"]{width:100%}
+    }
+
+    @media (prefers-reduced-motion:reduce){
+      *,*::before,*::after{
+        animation:none !important;
+        transition:none !important;
+        scroll-behavior:auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="container nav" id="nav">
+    <a href="#top" class="logo" aria-label="لاوکست استودیو">
+      <span class="logo-mark">♥</span>
+      <span>لاوکست استودیو</span>
+    </a>
+
+    <nav class="nav-links" aria-label="منوی اصلی">
+      <a href="#about">معرفی</a>
+      <a href="#demo">دمو</a>
+      <a href="#faq">سوالات</a>
+    </nav>
+
+    <a href="#demo" class="btn btn-primary nav-cta">شروع</a>
+    <button class="mobile-toggle" id="mobileToggle" aria-label="منو">☰</button>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="reveal">
+        <span class="badge">انتقال یک حس حدید با لاوکست استودیو</span>
+        <h1>
+          متن و صدای تو،
+          <span class="gradient-text">در قالب یک روایت صوتی یکدست</span>
+        </h1>
+        <p class="lead">
+          این نسخه برای نمایش یک روند ساده و واقعی ساخته شده:
+          متن را وارد می‌کنی، سیستم آن را به چهار بخش تقسیم می‌کند،
+          هر بخش را جدا ضبط می‌کنی و در پایان یک فایل صوتی نهایی با میکس ملایم و قابل دانلود می‌گیری.
+        </p>
+
+        <div class="hero-actions">
+          <a href="#demo" class="btn btn-primary">رفتن به دمو</a>
+          <a href="#about" class="btn btn-secondary">بیشتر بخوان</a>
+        </div>
+
+        <p class="hero-note">
+          این صفحه عمداً مینیمال طراحی شده تا تمرکز کاربر روی خود محصول و تجربه ضبط باقی بماند.
+        </p>
+      </div>
+
+      <div class="preview glass reveal" aria-hidden="true">
+        <div class="preview-inner">
+          <div class="wave">
+            <span class="bar" style="height:34%"></span>
+            <span class="bar" style="height:78%"></span>
+            <span class="bar" style="height:50%"></span>
+            <span class="bar" style="height:92%"></span>
+            <span class="bar" style="height:48%"></span>
+            <span class="bar" style="height:82%"></span>
+            <span class="bar" style="height:60%"></span>
+            <span class="bar" style="height:88%"></span>
+            <span class="bar" style="height:56%"></span>
+            <span class="bar" style="height:72%"></span>
+          </div>
+
+          <div class="preview-meta">
+            <div class="meta-row"><span>ورودی</span><strong>متن روایی</strong></div>
+            <div class="meta-row"><span>ساختار</span><strong>۴ بخش احساسی</strong></div>
+            <div class="meta-row"><span>خروجی</span><strong>فایل صوتی WAV</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="container">
+      <div class="section-head reveal">
+        <div class="eyebrow">معرفی کوتاه</div>
+        <h2>یک تجربه ساده، خلوت و متمرکز روی ضبط و خروجی.</h2>
+        <p>
+          این نسخه به‌جای شلوغ‌کردن صفحه با ادعاهای زیاد، روی سه کار اصلی تمرکز دارد:
+          بخش‌بندی متن، ضبط بخش‌به‌بخش و ساخت فایل نهایی با پولیش صوتی ملایم.
+        </p>
+      </div>
+
+      <div class="simple-grid">
+        <article class="card reveal">
+          <div class="icon">✍️</div>
+          <h3>متن را وارد کن</h3>
+          <p>هر متن کوتاه احساسی، روایی یا شخصی می‌تواند به چهار بخش تقسیم شود.</p>
+        </article>
+
+        <article class="card reveal">
+          <div class="icon">🎙️</div>
+          <h3>بخش‌ها را ضبط کن</h3>
+          <p>هر قسمت جدا ضبط می‌شود تا کنترل بیشتری روی لحن، مکث و اجرا داشته باشی.</p>
+        </article>
+
+        <article class="card reveal">
+          <div class="icon">🎧</div>
+          <h3>فایل نهایی را بگیر</h3>
+          <p>صدای نهایی با یک میکس ملایم، موسیقی نرم و خروجی WAV آماده دانلود می‌شود.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="demo">
+    <div class="container">
+      <div class="section-head reveal">
+        <div class="eyebrow">دموی محصول</div>
+        <h2>هسته اصلی محصول همین‌جاست.</h2>
+        <p>
+          متن نمونه را ویرایش کن یا متن خودت را جایگذاری کن. بعد هر چهار بخش را ضبط کن و خروجی نهایی را بساز.
+        </p>
+      </div>
+
+      <div class="demo-shell glass reveal">
+        <div class="demo-grid">
+          <aside class="panel">
+            <h3 style="margin-top:0">متن ورودی</h3>
+            <textarea id="storyInput" aria-label="متن ورودی">
+هنوز آن شبی را یادم هست که صدایت از پشت خط، آرام‌تر از همیشه بود. انگار می‌خواستی چیزی بگویی که مدت‌ها در دلت مانده بود، اما کلمات به سختی از میان سکوت عبور می‌کردند.
+
+من فقط گوش می‌دادم. نه برای جواب دادن، بلکه برای فهمیدن آن چیزی که پشت مکث‌ها پنهان شده بود. بعضی حرف‌ها وقتی دیر گفته می‌شوند، وزن بیشتری پیدا می‌کنند.
+
+آن لحظه فهمیدم که دلتنگی همیشه با گریه و آشوب نمی‌آید. گاهی در یک جمله کوتاه، یک نفس عمیق، یا حتی در لرزش خفیف صدا خودش را نشان می‌دهد.
+
+اگر روزی دوباره همان صدا را بشنوم            </textarea>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+              <button id="segmentBtn" class="btn btn-primary">ساخت بخش‌ها</button>
+              <button id="resetBtn" class="btn btn-secondary" type="button">پاک‌سازی</button>
+            </div>
+
+            <div class="controls">
+              <h3 style="margin:12px 0 0">تنظیمات خروجی نهایی</h3>
+
+              <label class="control">
+                <div>
+                  <strong>کاهش نویز</strong>
+                  <small>برای صداهای ضعیف و نویز پس‌زمینه</small>
+                </div>
+                <span class="switch">
+                  <input id="noiseToggle" type="checkbox" checked>
+                  <span></span>
+                </span>
+              </label>
+
+              <label class="control">
+                <div>
+                  <strong>پولیش وکال</strong>
+                  <small>برای شفافیت و کمی گرمای بیشتر</small>
+                </div>
+                <span class="switch">
+                  <input id="vocalToggle" type="checkbox" checked>
+                  <span></span>
+                </span>
+              </label>
+
+              <label class="control">
+                <div>
+                  <strong>موسیقی لایت</strong>
+                  <small>یک لایه آرام و محیطی روی خروجی</small>
+                </div>
+                <span class="switch">
+                  <input id="musicToggle" type="checkbox" checked>
+                  <span></span>
+                </span>
+              </label>
+
+              <label class="control">
+                <div>
+                  <strong>مستر نهایی</strong>
+                  <small>بالانس، فید و کنترل لودنس</small>
+                </div>
+                <span class="switch">
+                  <input id="masterToggle" type="checkbox" checked>
+                  <span></span>
+                </span>
+              </label>
+
+              <label class="control">
+                <div>
+                  <strong>شدت کاهش نویز</strong>
+                </div>
+                <input id="noiseAmount" type="range" min="0" max="100" value="42">
+              </label>
+
+              <label class="control">
+                <div>
+                  <strong>سطح موسیقی</strong>
+                </div>
+                <input id="musicAmount" type="range" min="0" max="100" value="80">
+              </label>
+
+              <label class="control">
+                <div>
+                  <strong>قدرت مستر</strong>
+                </div>
+                <input id="masterAmount" type="range" min="0" max="100" value="68">
+              </label>
+            </div>
+
+            <button id="generateBtn" class="btn btn-primary" style="width:100%;margin-top:18px" disabled>
+              ساخت فایل نهایی
+            </button>
+
+            <div class="progress-wrap" id="progressWrap">
+              <div class="progress"><div id="progressBar"></div></div>
+              <div class="log" id="processLog"></div>
+            </div>
+
+            <div class="final-box" id="finalBox">
+              <strong>خروجی آماده شد</strong>
+              <audio id="finalAudio" controls></audio>
+              <a id="downloadBtn" href="#" download="lovecast-final.wav" class="btn btn-primary" style="width:100%;margin-top:10px">
+                دانلود فایل WAV
+              </a>
+            </div>
+          </aside>
+
+          <section class="panel">
+            <h3 style="margin-top:0">بخش‌های تولیدشده</h3>
+            <p style="color:var(--muted);font-size:14px">
+              هر بخش را جدا ضبط کن. تا وقتی هر چهار بخش ضبط نشده باشند، ساخت فایل نهایی فعال نمی‌شود.
+            </p>
+            <div class="segments" id="segments"></div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="container">
+      <div class="section-head reveal">
+        <div class="eyebrow">سوالات رایج</div>
+        <h2>چند پاسخ کوتاه و مستقیم.</h2>
+      </div>
+
+      <div class="faq reveal">
+        <details open>
+          <summary>آیا این نسخه واقعاً داخل مرورگر کار می‌کند؟</summary>
+          <p>بله. ضبط و ساخت خروجی در همین صفحه و با APIهای مرورگر انجام می‌شود.</p>
+        </details>
+        <details>
+          <summary>آیا موسیقی نهایی آماده و واقعی به فایل اضافه می‌شود؟</summary>
+          <p>بله. در این نسخه یک لایه موسیقی محیطی ملایم به‌صورت برنامه‌ای تولید و با صدای نهایی ترکیب می‌شود.</p>
+        </details>
+        <details>
+          <summary>آیا کیفیت آن در حد استودیو حرفه‌ای است؟</summary>
+          <p>خیر، این یک دمو تحت وب است؛ اما برای ارائه، تست تجربه کاربری و ساخت نمونه اولیه، خروجی قابل قبول و تمیز می‌دهد.</p>
+        </details>
+        <details>
+          <summary>آیا می‌توانم متن خودم را جایگزین کنم؟</summary>
+          <p>بله. هر متن دلخواه را می‌توانی وارد کنی و دوباره بخش‌بندی بگیری.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="cta reveal">
+        <span class="badge">نسخه مینیمال و آماده اجرا</span>
+        <h2 style="margin-top:16px">آغاز یک تجربه جدید</h2>
+        <p style="color:var(--muted);max-width:680px;margin:12px auto 24px">
+          این نسخه یک نمونه تستی بوده است
+        </p>
+        <a href="#demo" class="btn btn-primary">بازگشت به دمو</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container footer-grid">
+    <div>
+      <div class="logo">
+        <span class="logo-mark">♥</span>
+        <span>لاوکست استودیو</span>
+      </div>
+      <p style="max-width:420px">
+        یک دمو مینیمال برای تبدیل متن و ضبط‌های بخش‌بندی‌شده به یک فایل صوتی نهایی.
+      </p>
+    </div>
+
+    <div>
+      <strong style="color:var(--text)">بخش‌ها</strong>
+      <div style="margin-top:10px">
+        <a href="#about" style="display:block;margin:7px 0">معرفی</a>
+        <a href="#demo" style="display:block;margin:7px 0">دمو</a>
+        <a href="#faq" style="display:block;margin:7px 0">سوالات</a>
+      </div>
+    </div>
+
+    <div>
+      <strong style="color:var(--text)">وضعیت</strong>
+      <p style="margin-top:10px">
+        نسخه دمو تحت وب برای ارائه و تست.
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script>
+    
+  const sectionBlueprints = [
+    {
+      title: "بخش اول",
+      label: "آغاز",
+      tone: "آرام و نزدیک",
+      speed: "کند",
+      pause: "مکث کوتاه",
+      goal: "ورود به حس"
+    },
+    {
+      title: "بخش دوم",
+      label: "توسعه",
+      tone: "روایی و صمیمی",
+      speed: "متوسط",
+      pause: "مکث طبیعی",
+      goal: "عمیق‌تر شدن"
+    },
+    {
+      title: "بخش سوم",
+      label: "اوج",
+      tone: "درونی و پررنگ",
+      speed: "کمی کند",
+      pause: "مکث معنادار",
+      goal: "نقطه احساسی اصلی"
+    },
+    {
+      title: "بخش چهارم",
+      label: "پایان",
+      tone: "آرام و جمع‌بندی‌شده",
+      speed: "آرام",
+      pause: "مکث پایانی",
+      goal: "فرود و ماندگاری"
+    }
+  ];
+
+  const storyInput = document.getElementById("storyInput");
+  const segmentBtn = document.getElementById("segmentBtn");
+  const resetBtn = document.getElementById("resetBtn");
+  const segmentsEl = document.getElementById("segments");
+  const generateBtn = document.getElementById("generateBtn");
+  const progressWrap = document.getElementById("progressWrap");
+  const progressBar = document.getElementById("progressBar");
+  const processLog = document.getElementById("processLog");
+  const finalBox = document.getElementById("finalBox");
+  const finalAudio = document.getElementById("finalAudio");
+  const downloadBtn = document.getElementById("downloadBtn");
+
+  const noiseToggle = document.getElementById("noiseToggle");
+  const vocalToggle = document.getElementById("vocalToggle");
+  const musicToggle = document.getElementById("musicToggle");
+  const masterToggle = document.getElementById("masterToggle");
+  const noiseAmount = document.getElementById("noiseAmount");
+  const musicAmount = document.getElementById("musicAmount");
+  const masterAmount = document.getElementById("masterAmount");
+  const BACKGROUND_MUSIC_URL = "assets/music/background.mp3";
+ 
+  async function loadMusicFromProject(audioContext, url) {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error("Music file not found: " + url);
+    }
+
+    const arrayBuffer = await response.arrayBuffer();
+    return await audioContext.decodeAudioData(arrayBuffer);
+  }
+
+  let mediaRecorder = null;
+  let currentRecordingIndex = null;
+  let chunks = [];
+  let recordings = [null, null, null, null];
+  let recordingUrls = [null, null, null, null];
+  let finalUrl = null;
+
+  function splitToFourParts(text){
+    const cleaned = text.replace(/\s+/g," ").trim();
+    if(!cleaned) return ["","","",""];
+
+    const sentences = cleaned
+      .split(/(?<=[.!؟?؛])\s+/)
+      .map(s => s.trim())
+      .filter(Boolean);
+
+    if(sentences.length >= 4){
+      const groups = [[],[],[],[]];
+      sentences.forEach((s,i)=>{
+        const idx = Math.min(3, Math.floor(i / Math.ceil(sentences.length / 4)));
+        groups[idx].push(s);
+      });
+      return groups.map(g => g.join(" "));
+    }
+
+    const words = cleaned.split(" ");
+    const size = Math.ceil(words.length / 4);
+    return [0,1,2,3].map(i => words.slice(i*size, (i+1)*size).join(" "));
+  }
+
+  function renderSegments(){
+    stopActiveRecorderIfNeeded();
+
+    recordings = [null, null, null, null];
+    recordingUrls.forEach(url => url && URL.revokeObjectURL(url));
+    recordingUrls = [null, null, null, null];
+
+    if(finalUrl) URL.revokeObjectURL(finalUrl);
+    finalUrl = null;
+    finalBox.style.display = "none";
+    progressWrap.style.display = "none";
+    progressBar.style.width = "0%";
+    processLog.textContent = "";
+
+    const parts = splitToFourParts(storyInput.value);
+
+    segmentsEl.innerHTML = parts.map((part,index)=>{
+      const s = sectionBlueprints[index];
+      return `
+        <article class="segment" data-index="${index}">
+          <div class="segment-top">
+            <div>
+              <div class="segment-title">${s.title} <span style="color:var(--muted)">| ${s.label}</span></div>
+              <div class="segment-meta">لحن: ${s.tone} • سرعت: ${s.speed}</div>
+            </div>
+            <span class="badge">${s.goal}</span>
+          </div>
+
+          <div class="segment-text">${part || "برای این بخش متن کافی وجود ندارد."}</div>
+
+          <div class="segment-meta">مکث پیشنهادی: ${s.pause}</div>
+
+          <div class="record-actions">
+            <button class="tiny-btn record-btn" data-index="${index}">شروع ضبط</button>
+            <button class="tiny-btn play-btn" data-index="${index}" disabled>پخش</button>
+            <span class="status" id="status-${index}">ضبط نشده</span>
+          </div>
+
+          <audio id="audio-${index}" controls style="display:none"></audio>
+        </article>
+      `;
+    }).join("");
+
+    bindSegmentButtons();
+    updateGenerateState();
+  }
+
+  function bindSegmentButtons(){
+    document.querySelectorAll(".record-btn").forEach(btn=>{
+      btn.addEventListener("click", ()=>toggleRecording(Number(btn.dataset.index)));
+    });
+
+    document.querySelectorAll(".play-btn").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const index = Number(btn.dataset.index);
+        const audio = document.getElementById(`audio-${index}`);
+        if(audio) audio.play();
+      });
+    });
+  }
+
+  async function toggleRecording(index){
+    if(currentRecordingIndex === index && mediaRecorder && mediaRecorder.state === "recording"){
+      mediaRecorder.stop();
+      return;
+    }
+
+    if(currentRecordingIndex !== null){
+      alert("ابتدا ضبط فعال را متوقف کن.");
+      return;
+    }
+
+    try{
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      chunks = [];
+      mediaRecorder = new MediaRecorder(stream);
+      currentRecordingIndex = index;
+
+      const btn = document.querySelector(`.record-btn[data-index="${index}"]`);
+      const status = document.getElementById(`status-${index}`);
+      btn.textContent = "توقف ضبط";
+      btn.classList.add("recording");
+      status.textContent = "در حال ضبط...";
+
+      mediaRecorder.ondataavailable = e => {
+        if(e.data.size > 0) chunks.push(e.data);
+      };
+
+      mediaRecorder.onstop = ()=>{
+        const blob = new Blob(chunks, { type: mediaRecorder.mimeType || "audio/webm" });
+        recordings[index] = blob;
+
+        if(recordingUrls[index]) URL.revokeObjectURL(recordingUrls[index]);
+        recordingUrls[index] = URL.createObjectURL(blob);
+
+        const audio = document.getElementById(`audio-${index}`);
+        const playBtn = document.querySelector(`.play-btn[data-index="${index}"]`);
+        audio.src = recordingUrls[index];
+        audio.style.display = "block";
+        playBtn.disabled = false;
+
+        btn.textContent = "ضبط دوباره";
+        btn.classList.remove("recording");
+        btn.classList.add("done");
+        status.textContent = "آماده";
+
+        stream.getTracks().forEach(track => track.stop());
+        currentRecordingIndex = null;
+        mediaRecorder = null;
+        updateGenerateState();
+      };
+
+      mediaRecorder.start();
+    }catch(err){
+      alert("دسترسی به میکروفون فعال نشد.");
+      currentRecordingIndex = null;
+    }
+  }
+
+  function stopActiveRecorderIfNeeded(){
+    if(mediaRecorder && mediaRecorder.state === "recording"){
+      mediaRecorder.stop();
+    }
+  }
+
+  function updateGenerateState(){
+    generateBtn.disabled = !recordings.every(Boolean);
+  }
+
+  async function blobToAudioBuffer(audioContext, blob){
+    const arr = await blob.arrayBuffer();
+    return await audioContext.decodeAudioData(arr);
+  }
+
+
+
+  function applyFadeInOut(data, sampleRate, fadeInSec = 0.045, fadeOutSec = 0.08){
+    const inSamples = Math.min(data.length, Math.floor(sampleRate * fadeInSec));
+    const outSamples = Math.min(data.length, Math.floor(sampleRate * fadeOutSec));
+
+    for(let i=0;i<inSamples;i++){
+      const g = i / inSamples;
+      data[i] *= g;
+    }
+
+    for(let i=0;i<outSamples;i++){
+      const idx = data.length - 1 - i;
+      const g = i / outSamples;
+      data[idx] *= (1 - g);
+    }
+  }
+
+  function softCompressorSample(x, drive = 1.35){
+    return Math.tanh(x * drive) / Math.tanh(drive);
+  }
+
+  function createLightMusicBuffer(ctx, duration, amount){
+    const sampleRate = ctx.sampleRate;
+    const length = Math.ceil(duration * sampleRate);
+    const buffer = ctx.createBuffer(2, length, sampleRate);
+
+    for(let ch=0; ch<2; ch++){
+      const data = buffer.getChannelData(ch);
+      let p1 = 0, p2 = 0, p3 = 0;
+      const f1 = ch === 0 ? 174.61 : 174.11;
+      const f2 = ch === 0 ? 220.00 : 220.7;
+      const f3 = ch === 0 ? 261.63 : 261.1;
+
+      for(let i=0; i<length; i++){
+        const t = i / sampleRate;
+
+        p1 += 2 * Math.PI * f1 / sampleRate;
+        p2 += 2 * Math.PI * f2 / sampleRate;
+        p3 += 2 * Math.PI * f3 / sampleRate;
+
+        const slowLfo = (Math.sin(2 * Math.PI * 0.035 * t) + 1) * 0.5;
+        const slowerLfo = (Math.sin(2 * Math.PI * 0.018 * t + 1.3) + 1) * 0.5;
+
+        const tone =
+          Math.sin(p1) * 0.42 +
+          Math.sin(p2) * 0.24 +
+          Math.sin(p3) * 0.16;
+
+        const shimmer = Math.sin(2 * Math.PI * (0.12 + ch * 0.01) * t) * 0.03;
+        const noise = (Math.random() * 2 - 1) * 0.01;
+
+        let env = Math.min(1, t / 3);
+        env *= Math.min(1, (duration - t) / 4);
+        env = Math.max(0, env);
+
+        data[i] = (tone * (0.16 + slowLfo * 0.08) + shimmer + noise * slowerLfo) * amount * env;
+      }
+
+      applyFadeInOut(data, sampleRate, 1.2, 2.5);
+    }
+
+    return buffer;
+  }
+
+  function normalizeAndMaster(buffer, masterStrength){
+    let peak = 0;
+
+    for(let ch=0; ch<buffer.numberOfChannels; ch++){
+      const data = buffer.getChannelData(ch);
+      for(let i=0;i<data.length;i++){
+        peak = Math.max(peak, Math.abs(data[i]));
+      }
+    }
+
+    const target = 0.82;
+    const gain = peak > 0 ? Math.min(2.8, target / peak) : 1;
+
+    for(let ch=0; ch<buffer.numberOfChannels; ch++){
+      const data = buffer.getChannelData(ch);
+      for(let i=0;i<data.length;i++){
+        let x = data[i] * gain;
+        x = softCompressorSample(x, 1.1 + masterStrength * 0.9);
+        data[i] = x * 0.94;
+      }
+    }
+  }
+
+  function audioBufferToWav(buffer){
+    const numChannels = buffer.numberOfChannels;
+    const sampleRate = buffer.sampleRate;
+    const length = buffer.length * numChannels * 2;
+    const arrayBuffer = new ArrayBuffer(44 + length);
+    const view = new DataView(arrayBuffer);
+
+    function writeString(offset, string){
+      for(let i=0;i<string.length;i++){
+        view.setUint8(offset + i, string.charCodeAt(i));
+      }
+    }
+
+    writeString(0,"RIFF");
+    view.setUint32(4,36 + length,true);
+    writeString(8,"WAVE");
+    writeString(12,"fmt ");
+    view.setUint32(16,16,true);
+    view.setUint16(20,1,true);
+    view.setUint16(22,numChannels,true);
+    view.setUint32(24,sampleRate,true);
+    view.setUint32(28,sampleRate * numChannels * 2,true);
+    view.setUint16(32,numChannels * 2,true);
+    view.setUint16(34,16,true);
+    writeString(36,"data");
+    view.setUint32(40,length,true);
+
+    let offset = 44;
+    const channels = [];
+    for(let ch=0; ch<numChannels; ch++) channels.push(buffer.getChannelData(ch));
+
+    for(let i=0; i<buffer.length; i++){
+      for(let ch=0; ch<numChannels; ch++){
+        let sample = Math.max(-1, Math.min(1, channels[ch][i]));
+        sample = sample < 0 ? sample * 0x8000 : sample * 0x7fff;
+        view.setInt16(offset, sample, true);
+        offset += 2;
+      }
+    }
+
+    return new Blob([arrayBuffer], { type:"audio/wav" });
+  }
+
+  async function generateFinalPodcast(){
+    generateBtn.disabled = true;
+    progressWrap.style.display = "block";
+    finalBox.style.display = "none";
+    progressBar.style.width = "0%";
+
+    const steps = [
+      "در حال خواندن فایل‌های ضبط‌شده...",
+      "در حال ساخت لایه اصلی صدا...",
+      "در حال پولیش وکال...",
+      "در حال چیدن مکث‌های بین بخش‌ها...",
+      "در حال ساخت موسیقی لایت...",
+      "در حال مستر نهایی...",
+      "در حال آماده‌سازی فایل دانلود..."
+    ];
+
+    try{
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      const ctx = new AudioContextClass();
+
+      const decoded = [];
+      for(let i=0;i<recordings.length;i++){
+        processLog.textContent = `${steps[0]} بخش ${i+1}`;
+        progressBar.style.width = `${10 + i * 8}%`;
+        decoded.push(await blobToAudioBuffer(ctx, recordings[i]));
+      }
+
+      const sampleRate = ctx.sampleRate;
+      const pauseSeconds = 0.9;
+      const pauseSamples = Math.floor(sampleRate * pauseSeconds);
+
+      const totalLength =
+        decoded.reduce((sum,b)=>sum + Math.floor(b.duration * sampleRate), 0) +
+        pauseSamples * (decoded.length - 1);
+
+      const output = ctx.createBuffer(2, totalLength, sampleRate);
+      let cursor = 0;
+
+      processLog.textContent = steps[1];
+      progressBar.style.width = "34%";
+
+      for(let i=0;i<decoded.length;i++){
+        const srcBuf = decoded[i];
+        const srcRate = srcBuf.sampleRate;
+        const outLen = Math.floor(srcBuf.duration * sampleRate);
+
+        for(let ch=0; ch<2; ch++){
+          const out = output.getChannelData(ch);
+          const src = srcBuf.getChannelData(Math.min(ch, srcBuf.numberOfChannels - 1));
+
+          let prev = 0;
+
+          for(let n=0; n<outLen; n++){
+            const srcIndex = Math.min(src.length - 1, Math.floor(n * srcRate / sampleRate));
+            let sample = src[srcIndex];
+
+            if(noiseToggle.checked){
+              const gate = Number(noiseAmount.value) / 100 * 0.02;
+              if(Math.abs(sample) < gate) sample *= 0.22;
+            }
+
+            if(vocalToggle.checked){
+              const hp = sample - prev * 0.985;
+              prev = sample;
+              sample = sample * 0.9 + hp * 0.22;
+              sample = softCompressorSample(sample, 1.18);
+            }
+
+            out[cursor + n] += sample;
+          }
+        }
+
+        for(let ch=0; ch<2; ch++){
+          const seg = output.getChannelData(ch).subarray(cursor, cursor + outLen);
+          applyFadeInOut(seg, sampleRate, 0.04, 0.07);
+        }
+
+        cursor += outLen;
+        if(i < decoded.length - 1) cursor += pauseSamples;
+      }
+
+      processLog.textContent = steps[2];
+      progressBar.style.width = "54%";
+      await new Promise(r => setTimeout(r, 240));
+
+        if (musicToggle.checked) {
+        processLog.textContent = "در حال اضافه کردن موسیقی پس‌زمینه...";
+        progressBar.style.width = "68%";
+
+        const left = output.getChannelData(0);
+        const right = output.getChannelData(1);
+
+        let musicBuffer = null;
+
+        try {
+            musicBuffer = await loadMusicFromProject(ctx, BACKGROUND_MUSIC_URL);
+            console.log("Background music loaded:", musicBuffer.duration, "seconds");
+        } catch (error) {
+            console.warn("Could not load background music. Using generated fallback music.", error);
+
+            // اگر فایل موسیقی پیدا نشد، یک موسیقی مصنوعی قابل شنیدن بساز
+            musicBuffer = createLightMusicBuffer(
+            ctx,
+            output.duration,
+            1
+            );
+        }
+
+        // مقدار اسلایدر موسیقی
+        let rawMusicValue = Number(musicAmount.value || 50);
+
+        // اگر max اسلایدر 1 باشد، هندل شود. اگر 100 باشد هم هندل شود.
+        let musicVolume = rawMusicValue > 1 ? rawMusicValue / 100 : rawMusicValue;
+
+        // حداقل ولوم برای اینکه واقعاً شنیده شود
+        musicVolume = Math.max(0.18, musicVolume);
+
+        // ولوم نهایی موسیقی زیر صدا
+        // اگر زیاد بود این را کمتر کن، مثلاً 0.28
+        const finalMusicVolume = musicVolume * 0.75;
+
+        const musicLeftData = musicBuffer.getChannelData(0);
+        const musicRightData =
+            musicBuffer.numberOfChannels > 1
+            ? musicBuffer.getChannelData(1)
+            : musicLeftData;
+
+        // نرمال‌سازی داخلی موسیقی، چون ممکن است فایل mp3 خیلی کم‌صدا باشد
+        let musicPeak = 0;
+
+        for (let i = 0; i < musicBuffer.length; i++) {
+            musicPeak = Math.max(
+            musicPeak,
+            Math.abs(musicLeftData[i] || 0),
+            Math.abs(musicRightData[i] || 0)
+            );
+        }
+
+        const musicNormalizeGain = musicPeak > 0 ? Math.min(4, 0.75 / musicPeak) : 1;
+
+        const fadeSamples = Math.floor(sampleRate * 1.8);
+
+        for (let i = 0; i < output.length; i++) {
+            // برای هماهنگی sample rate خروجی و موسیقی
+            const musicIndex = Math.floor(i * musicBuffer.sampleRate / sampleRate) % musicBuffer.length;
+
+            let musicLeft = musicLeftData[musicIndex] || 0;
+            let musicRight = musicRightData[musicIndex] || 0;
+
+            musicLeft *= musicNormalizeGain;
+            musicRight *= musicNormalizeGain;
+
+            // Fade In / Fade Out
+            let fade = 1;
+
+            if (i < fadeSamples) {
+            fade = i / fadeSamples;
+            } else if (i > output.length - fadeSamples) {
+            fade = (output.length - i) / fadeSamples;
+            }
+
+            fade = Math.max(0, Math.min(1, fade));
+
+            // میکس موسیقی زیر صدای اصلی
+            left[i] += musicLeft * finalMusicVolume * fade;
+            right[i] += musicRight * finalMusicVolume * fade;
+        }
+
+        console.log("Background music mixed with volume:", finalMusicVolume);
+        }
+
+      processLog.textContent = steps[5];
+      progressBar.style.width = "88%";
+
+      if(masterToggle.checked){
+        normalizeAndMaster(output, Number(masterAmount.value) / 100);
+      } else {
+        normalizeAndMaster(output, 0.25);
+      }
+
+      await new Promise(r => setTimeout(r, 300));
+
+      processLog.textContent = steps[6];
+      progressBar.style.width = "100%";
+
+      const wavBlob = audioBufferToWav(output);
+      if(finalUrl) URL.revokeObjectURL(finalUrl);
+      finalUrl = URL.createObjectURL(wavBlob);
+
+      finalAudio.src = finalUrl;
+      downloadBtn.href = finalUrl;
+      finalBox.style.display = "block";
+      processLog.textContent = "فایل نهایی ساخته شد.";
+      generateBtn.disabled = false;
+    }catch(error){
+      console.error(error);
+      processLog.textContent = "در ساخت خروجی خطایی رخ داد. لطفاً دوباره تلاش کن.";
+      generateBtn.disabled = false;
+    }
+  }
+
+  segmentBtn.addEventListener("click", renderSegments);
+
+  resetBtn.addEventListener("click", ()=>{
+    stopActiveRecorderIfNeeded();
+    recordings = [null, null, null, null];
+    recordingUrls.forEach(url => url && URL.revokeObjectURL(url));
+    recordingUrls = [null, null, null, null];
+
+    if(finalUrl) URL.revokeObjectURL(finalUrl);
+    finalUrl = null;
+
+    segmentsEl.innerHTML = "";
+    progressWrap.style.display = "none";
+    progressBar.style.width = "0%";
+    processLog.textContent = "";
+    finalBox.style.display = "none";
+    generateBtn.disabled = true;
+  });
+
+  generateBtn.addEventListener("click", generateFinalPodcast);
+
+  document.getElementById("mobileToggle").addEventListener("click", ()=>{
+    document.getElementById("nav").classList.toggle("open");
+  });
+
+  const observer = new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting) entry.target.classList.add("visible");
+    });
+  },{threshold:.12});
+
+  document.querySelectorAll(".reveal").forEach(el=>observer.observe(el));
+
+  renderSegments();
+</script>
+</body>
+</html>
